@@ -104,7 +104,7 @@ function minimax(board, depth, isMaximizing) {
             for (var j = 0; j < boardSize; j++) {
                 if (board[i][j] === " ") {
                     board[i][j] = "O"; // Make the move
-                    var score = minimax(board, depth - 1, false);
+                    var score = minimax(board, depth + 1, false);
                     board[i][j] = " "; // Undo the move
                     bestScore = Math.max(score, bestScore);
                 }
@@ -119,7 +119,7 @@ function minimax(board, depth, isMaximizing) {
             for (var j = 0; j < boardSize; j++) {
                 if (board[i][j] === " ") {
                     board[i][j] = "X"; // Make the move
-                    var score = minimax(board, depth - 1, true);
+                    var score = minimax(board, depth + 1, true);
                     board[i][j] = " "; // Undo the move
                     bestScore = Math.min(score, bestScore);
                 }
