@@ -63,7 +63,7 @@ function checkWin(player) {
     }
     return false;
 }
-function AiTurn(alpha, beta) {
+function AiTurn() {
     var bestScore = -Infinity;
     var move;
     // Iterate through all empty cells
@@ -73,7 +73,7 @@ function AiTurn(alpha, beta) {
                 // Make the move
                 Board[i][j] = "O";
                 // Calculate the score for this move
-                var score = minimax(Board, 0, alpha, beta, false);
+                var score = minimax(Board, 0, false);
                 Board[i][j] = " ";
                 // If the score is better than the current best score, update bestScore and move
                 if (score > bestScore) {
@@ -86,7 +86,7 @@ function AiTurn(alpha, beta) {
     // Make the best move
     Board[move.i][move.j] = "O";
 }
-function minimax(board, depth, alpha, beta, isMaximizing) {
+function minimax(board, depth, isMaximizing) {
     // Check if the game is over or if it's a terminal state
     if (checkWin("X")) {
         return -1;
@@ -104,13 +104,9 @@ function minimax(board, depth, alpha, beta, isMaximizing) {
             for (var j = 0; j < boardSize; j++) {
                 if (board[i][j] === " ") {
                     board[i][j] = "O"; // Make the move
-                    var score = minimax(board, depth - 1, alpha, beta, false);
+                    var score = minimax(board, depth - 1, false);
                     board[i][j] = " "; // Undo the move
                     bestScore = Math.max(score, bestScore);
-                    alpha = Math.max(alpha, score);
-                    if (beta <= alpha) {
-                        break;
-                    }
                 }
             }
         }
@@ -123,13 +119,9 @@ function minimax(board, depth, alpha, beta, isMaximizing) {
             for (var j = 0; j < boardSize; j++) {
                 if (board[i][j] === " ") {
                     board[i][j] = "X"; // Make the move
-                    var score = minimax(board, depth - 1, alpha, beta, true);
+                    var score = minimax(board, depth - 1, true);
                     board[i][j] = " "; // Undo the move
                     bestScore = Math.min(score, bestScore);
-                    beta = Math.min(beta, score);
-                    if (beta <= alpha) {
-                        break;
-                    }
                 }
             }
         }
@@ -149,14 +141,14 @@ function isBoardFull() {
 function validPosition(i, j) {
     return i >= 0 && j >= 0 && i < boardSize && j < boardSize;
 }
-function playerTurn(player, alpha, beta) {
+function playerTurn(player) {
     if (isBoardFull()) {
         console.log("Match draw ");
         return;
     }
     if (SinglePlayer === 1 && player === "O") {
         console.log("Player  ".concat(player, " Turn "));
-        AiTurn(alpha, beta);
+        AiTurn();
         printBoard();
         if (checkWin(player)) {
             console.log(" ".concat(player, " won the game "));
@@ -165,7 +157,7 @@ function playerTurn(player, alpha, beta) {
         if (isBoardFull() || checkWin("X")) {
             return;
         }
-        playerTurn("X", alpha, beta);
+        playerTurn("X");
     }
     else {
         console.log("Player  ".concat(player, " Turn  :  Enter position in i,j format  "));
@@ -184,28 +176,28 @@ function playerTurn(player, alpha, beta) {
                             return;
                         }
                         if (player === "X")
-                            playerTurn("O", alpha, beta);
+                            playerTurn("O");
                         else
-                            playerTurn("X", alpha, beta);
+                            playerTurn("X");
                     }
                     else {
                         console.log(" This position is already filled enter another position ");
-                        playerTurn(player, alpha, beta);
+                        playerTurn(player);
                     }
                 }
                 else {
                     console.log("Please enter the valid position  !");
-                    playerTurn(player, alpha, beta);
+                    playerTurn(player);
                 }
             }
             else {
                 console.log(" Please Enter the numbers in  row, col format ");
-                playerTurn(player, alpha, beta);
+                playerTurn(player);
             }
         });
     }
 }
-function startPlaying(alpha, beta) {
+function startPlaying() {
     console.log("Enter the size of the board");
     prompt.get(["size"], function (err, result) {
         var size = parseInt(result.size);
@@ -214,11 +206,11 @@ function startPlaying(alpha, beta) {
             console.log(boardSize);
             initializeBoard();
             generateAllPossibleWinnings();
-            playerTurn("X", alpha, beta);
+            playerTurn("X");
         }
         else {
             console.log("Please enter the size in numbers greater than or equal to 3");
-            startPlaying(alpha, beta);
+            startPlaying();
         }
     });
 }
@@ -230,12 +222,12 @@ function chooseGameMode() {
         var mode = parseInt(result.mode);
         if (mode === 1) {
             console.log("Single Player mode selected.");
-            startPlaying(-Infinity, Infinity);
+            startPlaying();
             SinglePlayer = 1;
         }
         else if (mode === 2) {
             console.log("Multi Player mode selected.");
-            startPlaying(-Infinity, Infinity);
+            startPlaying();
         }
         else {
             console.log("Invalid choice. Please enter 1 for Single Player or 2 for Multiplayer.");
